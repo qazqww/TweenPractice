@@ -24,14 +24,10 @@ public class AdjustColor : MonoBehaviour
 
     float time = 1;
     float elapsedTime = 0.0f;
+    [SerializeField]
     bool executed = false;
     bool pingpong = false; // 정->역->정 반복
     bool inverse = false; // 역으로 Tween 업데이트
-
-    public void Init()
-    {
-        
-    }
 
     private void Awake()
     {
@@ -39,7 +35,6 @@ public class AdjustColor : MonoBehaviour
 
         if (renderer != null)
             list_renderer.AddRange(renderer);
-        
     }
 
     void Update()
@@ -50,13 +45,17 @@ public class AdjustColor : MonoBehaviour
 
     private void OnGUI()
     {
-        if (GUI.Button(new Rect(200, 0, 200, 200), "Test"))
+        if (GUI.Button(new Rect(200, 0, 200, 200), "One"))
         {
-            Execute(Color.white, Color.blue, 2, Color.Lerp, ColorState.One);
+            Execute(Color.white, Color.blue, 2f, Color.Lerp, ColorState.One);
         }
-        if (GUI.Button(new Rect(400, 0, 200, 200), "Test"))
+        if (GUI.Button(new Rect(400, 0, 200, 200), "Inverse"))
         {
-            Execute(Color.white, Color.blue, 2, Color.Lerp, ColorState.Inverse);
+            Execute(Color.white, Color.blue, 2f, Color.Lerp, ColorState.Inverse);
+        }
+        if (GUI.Button(new Rect(600, 0, 200, 200), "PingPong"))
+        {
+            Execute(Color.white, Color.blue, 2f, Color.Lerp, ColorState.PingPong);
         }
     }
 
@@ -104,7 +103,16 @@ public class AdjustColor : MonoBehaviour
     }
 
     void PingPong()
-    {
-
+    {       
+        if (tw_color.IsEnd)
+        {
+            pingpong = !pingpong;
+            tw_color.SetEnd(false);
+            if (pingpong)
+                tw_color.SetTween(start, end, time, function);
+            else
+                tw_color.SetTween(end, start, time, function);
+        }
+        One();
     }
 }
