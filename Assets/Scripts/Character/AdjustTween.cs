@@ -84,19 +84,22 @@ public class AdjustTween<T, TCOMPONENT> : MonoBehaviour
     void One()
     {
         SetValue(tween.Update());
+        if (tween.IsEnd)
+            action = null;
     }
 
     void PingPong()
     {
+        One();
+        action = PingPong;
         if (tween.IsEnd)
-        {
+        {            
             pingpong = !pingpong;
             tween.SetEnd(false);
             if (!pingpong)
                 tween.SetTween(start, end, time, function);
             else
                 tween.SetTween(end, start, time, function);
-        }
-        One();
+        }        
     }
 }
