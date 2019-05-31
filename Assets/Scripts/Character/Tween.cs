@@ -13,13 +13,12 @@ public class Tween<T>
         get { return current; }
     }
 
-    System.Func<T, T, float, T> function; // 연산될 함수
-    System.Action delayAction; // 딜레이가 필요할 경우
+    System.Func<T, T, float, T> function;
+    // 연산될 함수 (시작값, 끝값, 시간, 결과값(out))
+    // Tween에선 대부분 Lerp 함수가 해당되는 듯
 
     float time;
     float elapsedTime;
-    float delayTime = 0.0f;
-    float delayElapsedTime = 0.0f;
 
     bool state; // 업데이트가 완료된 상태인가
     public bool IsEnd
@@ -27,30 +26,12 @@ public class Tween<T>
         get { return state; }
     }
 
-    void Delay()
-    {
-        delayElapsedTime += Time.deltaTime / delayTime;
-        delayElapsedTime = Mathf.Clamp01(delayElapsedTime);
-
-        if(delayElapsedTime >= 1.0f)
-        {
-            delayElapsedTime = 0.0f;
-            delayAction = null;
-        }
-    }
-
     public T Update()
     {
         if (state) // 완료된 상태
             return end;
-
-        if (delayAction != null) // 딜레이가 들어간 상태
-        {
-            delayAction();
-            return start;
-        }
-
-        if (function != null)
+        
+        if (function != null) // 시간 경과
         {
             elapsedTime += Time.deltaTime / time;
             elapsedTime = Mathf.Clamp01(elapsedTime);
@@ -63,16 +44,13 @@ public class Tween<T>
     }
 
     // 트위닝을 실행할 수 있도록 세팅해주는 함수
-    public void SetTween(T start, T end, float time, System.Func<T, T, float, T> function, float delayTime = -1)
+    public void SetTween(T start, T end, float time, System.Func<T, T, float, T> function)
     {
         this.start = start;
         this.end = end;
         this.time = time;
         this.function = function;
         elapsedTime = 0;
-
-        if (delayTime > 0)
-            delayAction = Delay;
     }
 
     public void SetEnd(bool state)
