@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AdjustColor : MonoBehaviour
+public class AdjustColor<T, TCOMPONENT> : MonoBehaviour
 {
     public enum ColorState
     {
@@ -27,7 +27,7 @@ public class AdjustColor : MonoBehaviour
     [SerializeField]
     bool executed = false;
     bool pingpong = false; // 정->역->정 반복
-    bool inverse = false; // 역으로 Tween 업데이트
+    //bool inverse = false; // 역으로 Tween 업데이트
 
     private void Awake()
     {
@@ -45,18 +45,18 @@ public class AdjustColor : MonoBehaviour
 
     private void OnGUI()
     {
-        if (GUI.Button(new Rect(200, 0, 200, 200), "One"))
-        {
-            Execute(Color.white, Color.blue, 2f, Color.Lerp, ColorState.One);
-        }
-        if (GUI.Button(new Rect(400, 0, 200, 200), "Inverse"))
-        {
-            Execute(Color.white, Color.blue, 2f, Color.Lerp, ColorState.Inverse);
-        }
-        if (GUI.Button(new Rect(600, 0, 200, 200), "PingPong"))
+        if (GUI.Button(new Rect(200, 0, 200, 200), "PingPong"))
         {
             Execute(Color.white, Color.blue, 2f, Color.Lerp, ColorState.PingPong);
         }
+        if (GUI.Button(new Rect(400, 0, 200, 200), "One"))
+        {
+            Execute(Color.white, Color.blue, 2f, Color.Lerp, ColorState.One);
+        }
+        if (GUI.Button(new Rect(600, 0, 200, 200), "Inverse"))
+        {
+            Execute(Color.white, Color.blue, 2f, Color.Lerp, ColorState.Inverse);
+        }        
     }
 
     public void Execute(Color start, Color end, float time, System.Func<Color, Color, float, Color> function,
@@ -108,7 +108,7 @@ public class AdjustColor : MonoBehaviour
         {
             pingpong = !pingpong;
             tw_color.SetEnd(false);
-            if (pingpong)
+            if (!pingpong)
                 tw_color.SetTween(start, end, time, function);
             else
                 tw_color.SetTween(end, start, time, function);
